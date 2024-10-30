@@ -80,24 +80,24 @@ class AnnDataLitModule(L.LightningDataModule):
             del adata.layers["counts"]
 
         # Split intro train, val, test datasets
-        if splitter is not None:
-            # AnnData Split
-            split_dict = datasplitter.PerturbationDataSplitter.split_dataset(
-                splitter_config=splitter,
-                obs_dataframe=adata.obs,
-                perturbation_key=perturbation_key,
-                perturbation_combination_delimiter=perturbation_combination_delimiter,
-                perturbation_control_value=perturbation_control_value,
-            )
+        # if splitter is not None:
+        #     # AnnData Split
+        #     split_dict = datasplitter.PerturbationDataSplitter.split_dataset(
+        #         splitter_config=splitter,
+        #         obs_dataframe=adata.obs,
+        #         perturbation_key=perturbation_key,
+        #         perturbation_combination_delimiter=perturbation_combination_delimiter,
+        #         perturbation_control_value=perturbation_control_value,
+        #     )
 
-            train_adata = adata[split_dict["train"]]
-            val_adata = adata[split_dict["val"]]
-            test_adata = adata[split_dict["test"]]
+            # train_adata = adata[split_dict["train"]]
+            # val_adata = adata[split_dict["val"]]
+            # test_adata = adata[split_dict["test"]]
 
-        else:
-            train_adata = adata
-            val_adata = None
-            test_adata = None
+        # else:
+        train_adata = adata
+        val_adata = None
+        test_adata = None
 
         # Create datasets
         self.train_dataset, train_context = dataset_class.from_anndata(
@@ -136,8 +136,10 @@ class AnnDataLitModule(L.LightningDataModule):
 
             # Set transform pipeline for each dataset
             self.train_dataset.transform = transform_pipeline
-            self.val_dataset.transform = transform_pipeline
-            self.test_dataset.transform = transform_pipeline
+            if self.test_dataset is not None:
+                self.test_dataset.transform = transform_pipeline
+            if self.val_dataset is not None:
+                self.val_dataset.transform = transform_pipeline
 
         # Build example collation function
         if self.batch_sample is True:

@@ -126,7 +126,7 @@ class PerturbationModel(L.LightningModule, ABC):
         )
         lr_scheduler = {
             "scheduler": scheduler,
-            "monitor": self.lr_monitor_key,
+            "monitor": "train_loss",#self.lr_monitor_key,
             "frequency": self.lr_scheduler_freq,
             "interval": self.lr_scheduler_interval,
         }

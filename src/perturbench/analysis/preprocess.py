@@ -102,8 +102,8 @@ def preprocess(
 
     ## Preprocess
     print("Preprocessing ...")
-    sc.pp.filter_genes(adata, min_cells=10)
-    sc.pp.calculate_qc_metrics(adata, inplace=True)
+    # sc.pp.filter_genes(adata, min_cells=10)
+    # sc.pp.calculate_qc_metrics(adata, inplace=True)
 
     ## Normalize if needed
     adata.layers["counts"] = adata.X.copy()
@@ -111,45 +111,45 @@ def preprocess(
     sc.pp.log1p(adata)
 
     ## Pull out perturbed genes
-    unique_perturbations = set()
-    for comb in adata.obs[perturbation_key].unique():
-        unique_perturbations.update(comb.split(combination_delimiter))
-    unique_perturbations = unique_perturbations.intersection(adata.var_names)
+    # unique_perturbations = set()
+    # for comb in adata.obs[perturbation_key].unique():
+    #     unique_perturbations.update(comb.split(combination_delimiter))
+    # unique_perturbations = unique_perturbations.intersection(adata.var_names)
 
     ## Subset to highly variable or differentially expressed genes
-    if highly_variable > 0:
-        print(
-            "Filtering for highly variable genes or differentially expressed genes ..."
-        )
-        sc.pp.highly_variable_genes(
-            adata,
-            batch_key="cov_merged",
-            flavor="seurat_v3",
-            layer="counts",
-            n_top_genes=int(highly_variable),
-            subset=False,
-        )
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            deg_gene_dict = differential_expression_by_covariate(
-                adata,
-                perturbation_key,
-                control_value,
-                covariate_keys,
-                n_differential_genes=degs,
-                rankby_abs=True,
-                key_added="rank_genes_groups_cov",
-                return_dict=True,
-                delim="_",
-            )
-        deg_genes = set()
-        for genes in deg_gene_dict.values():
-            deg_genes.update(genes)
-
-        var_genes = list(adata.var_names[adata.var["highly_variable"]])
-        var_genes = list(unique_perturbations.union(var_genes).union(deg_genes))
-        adata = adata[:, var_genes]
+    # if highly_variable > 0:
+    #     print(
+    #         "Filtering for highly variable genes or differentially expressed genes ..."
+    #     )
+    #     sc.pp.highly_variable_genes(
+    #         adata,
+    #         batch_key="cov_merged",
+    #         flavor="seurat_v3",
+    #         layer="counts",
+    #         n_top_genes=int(highly_variable),
+    #         subset=False,
+    #     )
+    #
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         deg_gene_dict = differential_expression_by_covariate(
+    #             adata,
+    #             perturbation_key,
+    #             control_value,
+    #             covariate_keys,
+    #             n_differential_genes=degs,
+    #             rankby_abs=True,
+    #             key_added="rank_genes_groups_cov",
+    #             return_dict=True,
+    #             delim="_",
+    #         )
+    #     deg_genes = set()
+    #     for genes in deg_gene_dict.values():
+    #         deg_genes.update(genes)
+    #
+    #     var_genes = list(adata.var_names[adata.var["highly_variable"]])
+    #     var_genes = list(unique_perturbations.union(var_genes).union(deg_genes))
+    #     adata = adata[:, var_genes]
 
     print("Processed dataset summary:")
     print(adata)

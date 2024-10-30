@@ -4,8 +4,8 @@
 # order of defaults determines the order in which configs override each other
 defaults:
   - _self_
-  - data: ??? ## Specify data config
-  - model: ??? ## Specify model config
+  - data: op3
+  - model: latent_additive
   - trainer: default
   - paths: default
   - hydra: default
@@ -15,13 +15,13 @@ defaults:
   - experiment: null
 
 # Provide checkpoint path to pretrained model
-ckpt_path: ???
+ckpt_path: "../data/perturbench_data/logs/final_model.ckpt"
 
 # task name, determines output directory path
 task_name: "predict"
 
 # Path to prediction dataframe (generate with notebooks/demos/generate_prediction_dataframe)
-prediction_dataframe_path: ???
+prediction_dataframe_path: ${paths.data_dir}/prediction_dataframe.csv
 
 # seed for random number generators in pytorch, numpy and python.random
 seed: null

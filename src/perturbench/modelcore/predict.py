@@ -8,7 +8,7 @@ import os
 from perturbench.data.datasets import Counterfactual
 from perturbench.data.utils import batch_dataloader
 from perturbench.data.collate import noop_collate
-from .models.base import PerturbationModel
+from perturbench.modelcore.models.base import PerturbationModel
 
 log = logging.getLogger(__name__)
 
@@ -54,9 +54,9 @@ def predict(
             raise ValueError(
                 f"Prediction dataframe must contain column {covariate_key}"
             )
-
     # Create inference dataloader
-    test_adata = datamodule.test_dataset.reference_adata
+    import anndata as ad
+    test_adata = ad.read_h5ad(cfg.data.datapath)
     control_adata = test_adata[
         test_adata.obs[cfg.data.perturbation_key] == cfg.data.perturbation_control_value
     ]

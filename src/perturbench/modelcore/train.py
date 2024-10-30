@@ -37,12 +37,23 @@ def train(runtime_context: dict):
 
     log.info("Instantiating trainer <%s>", cfg.trainer._target_)
     trainer: L.Trainer = hydra.utils.instantiate(
-        cfg.trainer, callbacks=callbacks, logger=loggers
+        cfg.trainer, callbacks=callbacks, logger=loggers, limit_val_batches=0,
+    num_sanity_val_steps=0
     )
 
+    save_path = f"../data/perturbench_data/logs/final_model.ckpt"
+    log.info(f"Final model will be saved at: {save_path}")
     if cfg.get("train"):
         log.info("Starting training!")
         trainer.fit(model=model, datamodule=datamodule, ckpt_path=cfg.get("ckpt_path"))
+        
+        # Save model after training
+        # if trainer.checkpoint_callback is not None:
+        #     log.info(f"Best model saved at: {trainer.checkpoint_callback.best_model_path}")
+        # else:
+        # If no checkpoint callback is configured, save the final model state
+        trainer.save_checkpoint(save_path)
+        log.info(f"Final model saved at: {save_path}")
 
     train_metrics = trainer.callback_metrics
 
